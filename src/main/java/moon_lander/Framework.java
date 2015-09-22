@@ -1,8 +1,6 @@
 package moon_lander;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -52,7 +50,7 @@ public class Framework extends Canvas {
     /**
      * Possible states of the game
      */
-    public static enum GameState {
+    public enum GameState {
         STARTING, VISUALIZING, GAME_CONTENT_LOADING, MAIN_MENU, OPTIONS, PLAYING, GAMEOVER, DESTROYED
     }
 
@@ -98,7 +96,7 @@ public class Framework extends Canvas {
      */
     private void LoadContent() {
         try {
-            URL moonLanderMenuImgUrl = this.getClass().getResource("/menu.jpg");
+            URL moonLanderMenuImgUrl = this.getClass().getResource("/menu.png");
             moonLanderMenuImg = ImageIO.read(moonLanderMenuImgUrl);
         } catch (IOException ex) {
             Logger.getLogger(Framework.class.getName()).log(Level.SEVERE, null, ex);
@@ -189,9 +187,11 @@ public class Framework extends Canvas {
             case MAIN_MENU:
                 g2d.drawImage(moonLanderMenuImg, 0, 0, frameWidth, frameHeight, null);
                 g2d.setColor(Color.white);
-                g2d.drawString("Use w a d keys to controle the rocket.", frameWidth / 2 - 117, frameHeight / 2);
-                g2d.drawString("Press any key to start the game.", frameWidth / 2 - 100, frameHeight / 2 + 30);
-                g2d.drawString("WWW.GAMETUTORIAL.NET", 7, frameHeight - 5);
+                g2d.setFont(new Font("Tahoma", Font.BOLD, 16));
+                g2d.drawString("Use W S A D keys to control the rocket.", frameWidth / 2 - 170, frameHeight / 2 + 50);
+                g2d.setColor(Color.red);
+
+                g2d.drawString("Press any key to start the game.", frameWidth / 2 - 140, frameHeight / 2 + 80);
                 break;
             case OPTIONS:
                 //...

@@ -1,8 +1,6 @@
 package moon_lander;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -25,10 +23,11 @@ public class Game {
      */
     private LandingArea landingArea;
 
+    private final static int NUMBER_OF_METEORS=5;
     /**
      * Meteor.
      */
-    private Meteor meteor[]=new Meteor[5];
+    private Meteor meteor[]=new Meteor[NUMBER_OF_METEORS];
     /**
      * Game background image.
      */
@@ -62,7 +61,7 @@ public class Game {
     private void Initialize() {
         playerRocket = new PlayerRocket();
         landingArea = new LandingArea();
-        for(int i=0;i<5;i++) {
+        for(int i=0;i<NUMBER_OF_METEORS;i++) {
             meteor[i] = new Meteor();
         }
     }
@@ -100,7 +99,7 @@ public class Game {
     public void UpdateGame(long gameTime, Point mousePosition) {
         // Move the rocket
         playerRocket.Update();
-        for(int i=0;i<5;i++) {
+        for(int i=0;i<NUMBER_OF_METEORS;i++) {
             meteor[i].Update();
 
             if (playerRocket.rocketRectangle.intersects(meteor[i].meteorRectangle)) {
@@ -138,7 +137,7 @@ public class Game {
         g2d.drawImage(backgroundImg, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
 
         landingArea.Draw(g2d);
-        for(int i=0;i<5;i++)
+        for(int i=0;i<NUMBER_OF_METEORS;i++)
          meteor[i].Draw(g2d);
         playerRocket.Draw(g2d);
     }
@@ -153,16 +152,20 @@ public class Game {
      */
     public void DrawGameOver(Graphics2D g2d, Point mousePosition, long gameTime) {
         Draw(g2d, mousePosition);
+        g2d.setFont(new Font("Tahoma", Font.BOLD, 16));
 
-        g2d.drawString("Press space or enter to restart.", Framework.frameWidth / 2 - 100, Framework.frameHeight / 3 + 70);
+        g2d.setColor(Color.red);
+
+        g2d.drawString("Press space or enter to restart.", Framework.frameWidth / 2 - 140, Framework.frameHeight / 3 + 70);
 
         if (playerRocket.landed) {
+            g2d.setColor(Color.white);
 
-            g2d.drawString("You have successfully landed!", Framework.frameWidth / 2 - 100, Framework.frameHeight / 3);
+            g2d.drawString("You have successfully landed!", Framework.frameWidth / 2 - 140, Framework.frameHeight / 3);
             g2d.drawString("You have landed in " + gameTime / Framework.secInNanosec + " seconds.", Framework.frameWidth / 2 - 100, Framework.frameHeight / 3 + 20);
         } else {
             g2d.setColor(Color.red);
-            g2d.drawString("You have crashed the rocket!", Framework.frameWidth / 2 - 95, Framework.frameHeight / 3);
+            g2d.drawString("You have crashed the rocket!", Framework.frameWidth / 2 - 140, Framework.frameHeight / 3);
             g2d.drawImage(redBorderImg, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
         }
     }
