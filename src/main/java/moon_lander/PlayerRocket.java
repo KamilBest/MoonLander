@@ -1,7 +1,6 @@
 package moon_lander;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -16,6 +15,7 @@ import javax.imageio.ImageIO;
  */
 
 public class PlayerRocket {
+    Rectangle rocketRectangle;
 
     /**
      * It contains a random number for starting X coordinate of the rocket.
@@ -106,6 +106,7 @@ public class PlayerRocket {
         Initialize();
         LoadContent();
         rocketCoordinateX = random.nextInt(Framework.frameWidth - rocketImgWidth);
+
     }
 
 
@@ -165,6 +166,8 @@ public class PlayerRocket {
      * Here we move the rocket.
      */
     public void Update() {
+        rocketRectangle = new Rectangle(rocketCoordinateX, rocketCoordinateX, rocketImgWidth, rocketImgHeight);
+
         // Calculating speed for moving up or down.
         if (Canvas.keyboardKeyState(KeyEvent.VK_W))
             speedY -= speedAccelerating;

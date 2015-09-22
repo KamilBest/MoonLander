@@ -26,6 +26,10 @@ public class Game {
     private LandingArea landingArea;
 
     /**
+     * Meteor.
+     */
+    private Meteor meteor[]=new Meteor[5];
+    /**
      * Game background image.
      */
     private BufferedImage backgroundImg;
@@ -58,6 +62,9 @@ public class Game {
     private void Initialize() {
         playerRocket = new PlayerRocket();
         landingArea = new LandingArea();
+        for(int i=0;i<5;i++) {
+            meteor[i] = new Meteor();
+        }
     }
 
     /**
@@ -93,7 +100,17 @@ public class Game {
     public void UpdateGame(long gameTime, Point mousePosition) {
         // Move the rocket
         playerRocket.Update();
+        for(int i=0;i<5;i++) {
+            meteor[i].Update();
 
+            if (playerRocket.rocketRectangle.intersects(meteor[i].meteorRectangle)) {
+                playerRocket.crashed = true;
+                Framework.gameState = Framework.GameState.GAMEOVER;
+            }
+            if (meteor[i].meteorCoordinateY + meteor[i].meteorImgHeight - 10 > landingArea.y)
+                meteor[i].crashed = true;
+
+        }
         // Checks where the player rocket state (in space, landed, crashed).
         // Check whether bottom rocketCoordinateY coordinate of the rocket if is it near the landing area.
         if (playerRocket.rocketCoordinateY + playerRocket.rocketImgHeight - 10 > landingArea.y) {
@@ -121,7 +138,8 @@ public class Game {
         g2d.drawImage(backgroundImg, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
 
         landingArea.Draw(g2d);
-
+        for(int i=0;i<5;i++)
+         meteor[i].Draw(g2d);
         playerRocket.Draw(g2d);
     }
 
