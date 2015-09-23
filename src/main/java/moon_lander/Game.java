@@ -23,11 +23,11 @@ public class Game {
      */
     private LandingArea landingArea;
 
-    private final static int NUMBER_OF_METEORS=5;
+    private final static int NUMBER_OF_METEORS = 10;
     /**
      * Meteor.
      */
-    private Meteor meteor[]=new Meteor[NUMBER_OF_METEORS];
+    private Meteor meteor[] = new Meteor[NUMBER_OF_METEORS];
     /**
      * Game background image.
      */
@@ -38,6 +38,10 @@ public class Game {
      */
     private BufferedImage redBorderImg;
 
+    /**
+     * Image of hole after explosion.
+     */
+    private BufferedImage holeImg;
 
     public Game() {
         Framework.gameState = Framework.GameState.GAME_CONTENT_LOADING;
@@ -61,7 +65,7 @@ public class Game {
     private void Initialize() {
         playerRocket = new PlayerRocket();
         landingArea = new LandingArea();
-        for(int i=0;i<NUMBER_OF_METEORS;i++) {
+        for (int i = 0; i < NUMBER_OF_METEORS; i++) {
             meteor[i] = new Meteor();
         }
     }
@@ -76,6 +80,9 @@ public class Game {
 
             URL redBorderImgUrl = this.getClass().getResource("/red_border.png");
             redBorderImg = ImageIO.read(redBorderImgUrl);
+
+            URL holeImgUrl = this.getClass().getResource("/hole.png");
+            holeImg = ImageIO.read(holeImgUrl);
         } catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -87,6 +94,8 @@ public class Game {
      */
     public void RestartGame() {
         playerRocket.ResetPlayer();
+        for (int i = 0; i < NUMBER_OF_METEORS; i++)
+            meteor[i].resetMeteors();
     }
 
 
@@ -99,15 +108,22 @@ public class Game {
     public void UpdateGame(long gameTime, Point mousePosition) {
         // Move the rocket
         playerRocket.Update();
-        for(int i=0;i<NUMBER_OF_METEORS;i++) {
+        for (int i = 0; i < NUMBER_OF_METEORS; i++) {
             meteor[i].Update();
 
-            if (playerRocket.rocketRectangle.intersects(meteor[i].meteorRectangle)) {
+            if (playerRocket.rocketCoordinateX < meteor[i].meteorCoordinateX + meteor[i].metheorImgWidth &&
+                    playerRocket.rocketCoordinateX + playerRocket.rocketImgWidth > meteor[i].meteorCoordinateX &&
+                    playerRocket.rocketCoordinateY < meteor[i].meteorCoordinateY + meteor[i].meteorImgHeight &&
+                    playerRocket.rocketImgHeight + playerRocket.rocketCoordinateY > meteor[i].meteorCoordinateY) {
+
+                //collision = true
                 playerRocket.crashed = true;
+                meteor[i].resetMeteors();
                 Framework.gameState = Framework.GameState.GAMEOVER;
             }
-            if (meteor[i].meteorCoordinateY + meteor[i].meteorImgHeight - 10 > landingArea.y)
+            if (meteor[i].meteorCoordinateY + meteor[i].meteorImgHeight - 10 > landingArea.y) {
                 meteor[i].crashed = true;
+            }
 
         }
         // Checks where the player rocket state (in space, landed, crashed).
@@ -130,18 +146,20 @@ public class Game {
     /**
      * Draw the game to the screen.
      *
-     * @param g2d           Graphics2D
-     * @param mousePosition current mouse position.
+     * @param g2d Graphics2D
      */
-    public void Draw(Graphics2D g2d, Point mousePosition) {
+    public void Draw(Graphics2D g2d) {
         g2d.drawImage(backgroundImg, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
 
         landingArea.Draw(g2d);
-        for(int i=0;i<NUMBER_OF_METEORS;i++)
-         meteor[i].Draw(g2d);
+        for (int i = 0; i < NUMBER_OF_METEORS; i++) {
+            meteor[i].Draw(g2d);
+            if (meteor[i].crashed) {
+                meteor[i].DrawMeteorCrash(g2d);
+            }
+        }
         playerRocket.Draw(g2d);
     }
-
 
     /**
      * Draw the game over screen.
@@ -151,7 +169,7 @@ public class Game {
      * @param gameTime      Game time in nanoseconds.
      */
     public void DrawGameOver(Graphics2D g2d, Point mousePosition, long gameTime) {
-        Draw(g2d, mousePosition);
+        Draw(g2d);
         g2d.setFont(new Font("Tahoma", Font.BOLD, 16));
 
         g2d.setColor(Color.red);

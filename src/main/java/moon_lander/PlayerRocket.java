@@ -15,7 +15,6 @@ import javax.imageio.ImageIO;
  */
 
 public class PlayerRocket {
-    Rectangle rocketRectangle;
 
     /**
      * It contains a random number for starting X coordinate of the rocket.
@@ -106,18 +105,13 @@ public class PlayerRocket {
         Initialize();
         LoadContent();
         rocketCoordinateX = random.nextInt(Framework.frameWidth - rocketImgWidth);
-
     }
-
 
     private void Initialize() {
         random = new Random();
-
         ResetPlayer();
-
         speedAccelerating = 2;
         speedStopping = 1;
-
         topLandingSpeed = 5;
     }
 
@@ -131,7 +125,7 @@ public class PlayerRocket {
             URL rocketLandedImgUrl = this.getClass().getResource("/rocket_landed.png");
             rocketLandedImg = ImageIO.read(rocketLandedImgUrl);
 
-            URL rocketCrashedImgUrl = this.getClass().getResource("/rocket_crashed.png");
+            URL rocketCrashedImgUrl = this.getClass().getResource("/explosion.png");
             rocketCrashedImg = ImageIO.read(rocketCrashedImgUrl);
 
             URL rocketFireImgUrl = this.getClass().getResource("/rocket_fire.png");
@@ -155,7 +149,7 @@ public class PlayerRocket {
         crashed = false;
 
         rocketCoordinateX = random.nextInt(Framework.frameWidth - rocketImgWidth);
-        rocketCoordinateY = 10;
+        rocketCoordinateY = 200;
 
         speedX = 0;
         speedY = 0;
@@ -166,7 +160,6 @@ public class PlayerRocket {
      * Here we move the rocket.
      */
     public void Update() {
-        rocketRectangle = new Rectangle(rocketCoordinateX, rocketCoordinateX, rocketImgWidth, rocketImgHeight);
 
         // Calculating speed for moving up or down.
         if (Canvas.keyboardKeyState(KeyEvent.VK_W))
@@ -189,6 +182,7 @@ public class PlayerRocket {
         // Moves the rocket.
         rocketCoordinateX += speedX;
         rocketCoordinateY += speedY;
+
     }
 
     public void Draw(Graphics2D g2d) {
@@ -201,13 +195,13 @@ public class PlayerRocket {
             g2d.drawImage(rocketCrashedImg, rocketCoordinateX, rocketCoordinateY + rocketImgHeight - rocketCrashedImg.getHeight(), null);
         } else {
             if (Canvas.keyboardKeyState(KeyEvent.VK_W))
-                g2d.drawImage(rocketFireImg, rocketCoordinateX + 12, rocketCoordinateY + 66, null);
+                g2d.drawImage(rocketFireImg, rocketCoordinateX + 10, rocketCoordinateY + 66, null);
 
             if (Canvas.keyboardKeyState(KeyEvent.VK_D))
-                g2d.drawImage(leftFireImg, rocketCoordinateX - 5, rocketCoordinateY, null);
+                g2d.drawImage(leftFireImg, rocketCoordinateX - 10, rocketCoordinateY, null);
 
             if (Canvas.keyboardKeyState(KeyEvent.VK_A))
-                g2d.drawImage(rightFireImg, rocketCoordinateX + 45, rocketCoordinateY, null);
+                g2d.drawImage(rightFireImg, rocketCoordinateX + 42, rocketCoordinateY, null);
             g2d.drawImage(rocketImg, rocketCoordinateX, rocketCoordinateY, null);
         }
     }

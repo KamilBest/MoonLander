@@ -13,8 +13,6 @@ import java.util.logging.Logger;
  * moon_lander.Meteor class. Rocket have to avoid metheors and land.
  */
 public class Meteor {
-    public Rectangle meteorRectangle;
-
     /**
      * It contains a random number for starting X coordinate of the meteor.
      */
@@ -60,42 +58,50 @@ public class Meteor {
      */
     public int meteorImgHeight;
 
-    private int counter=0;
+    /**
+     * Random direction for meteor (left or right).
+     */
+    private boolean meteorFlyDirection;
 
-    Meteor()
-    {
+    /**
+     * Starting position of meteor.
+     */
+    private final int STARTING_POSITION = -100;
+
+    /**
+     * Max random speed.
+     */
+    private final int MAX_RANDOM_SPEED = 10;
+
+    /**
+     * The smallest X speed.
+     */
+    private final int SMALLEST_X_SPEED = 3;
+    /**
+     * The smallest Y speed.
+     */
+    private final int SMALLEST_Y_SPEED = 4;
+
+    Meteor() {
         Initialize();
         LoadContent();
     }
-    private void Initialize()
-    {
-        boolean sign;
+
+    private void Initialize() {
         randomNumber = new Random();
-        meteorCoordinateX = randomNumber.nextInt(Framework.frameWidth - metheorImgWidth);
+        resetMeteors();
 
-        sign=randomNumber.nextBoolean();
-        if(sign) {
-            speedX =randomNumber.nextInt(3)+1;
-            speedY=randomNumber.nextInt(3)+1;
-
-        }
-        else
-        {
-            speedX=-randomNumber.nextInt(3)-1;
-            speedY=randomNumber.nextInt(3)+1;
-
-        }
 
     }
-    private void LoadContent()
-    {
+
+    private void LoadContent() {
         try {
             URL meteorImgUrl = this.getClass().getResource("/meteor.png");
             meteorImg = ImageIO.read(meteorImgUrl);
             metheorImgWidth = meteorImg.getWidth();
             meteorImgHeight = meteorImg.getHeight();
 
-            URL meteorExplosionImgUrl = this.getClass().getResource("/rocket_crashed.png");
+            URL meteorExplosionImgUrl = this.getClass().getResource("/explosion.png");
             meteorExplosionImg = ImageIO.read(meteorExplosionImgUrl);
 
             URL holeImgUrl = this.getClass().getResource("/hole.png");
@@ -106,30 +112,39 @@ public class Meteor {
         }
     }
 
+    public void resetMeteors() {
+        crashed = false;
+        meteorCoordinateX = randomNumber.nextInt(Framework.frameWidth - metheorImgWidth);
+        meteorCoordinateY = STARTING_POSITION;
+        meteorFlyDirection = randomNumber.nextBoolean();
+        if (meteorFlyDirection) {
+            speedX = randomNumber.nextInt(MAX_RANDOM_SPEED) + SMALLEST_X_SPEED;
+            speedY = randomNumber.nextInt(MAX_RANDOM_SPEED) + SMALLEST_Y_SPEED;
+        } else {
+            speedX = -randomNumber.nextInt(MAX_RANDOM_SPEED) - SMALLEST_X_SPEED;
+            speedY = randomNumber.nextInt(MAX_RANDOM_SPEED) + SMALLEST_Y_SPEED;
+        }
+    }
+
     /**
      * Here we move the rocket.
      */
     public void Update() {
-        meteorRectangle = new Rectangle(meteorCoordinateX, meteorCoordinateY, metheorImgWidth, meteorImgHeight);
-        if(crashed)
-        {
-            counter++;
-            speedX=0;
-            speedY=0;
+        if (crashed) {
+            speedX = 0;
+            speedY = 0;
+            resetMeteors();
         }
         meteorCoordinateX += speedX;
         meteorCoordinateY += speedY;
-
     }
-    public void Draw(Graphics2D g2d)
-    {
-        if(crashed&&counter<15)
-            g2d.drawImage(meteorExplosionImg,meteorCoordinateX,meteorCoordinateY,null);
-        else if(crashed==false)
-        g2d.drawImage(meteorImg, meteorCoordinateX, meteorCoordinateY, null);
-        else
-            g2d.drawImage(holeImg, meteorCoordinateX, meteorCoordinateY, null);
 
+    public void Draw(Graphics2D g2d) {
+        g2d.drawImage(meteorImg, meteorCoordinateX, meteorCoordinateY, null);
+    }
+
+    public void DrawMeteorCrash(Graphics2D g2d) {
+        g2d.drawImage(meteorExplosionImg, meteorCoordinateX, meteorCoordinateY - 50, null);
     }
 }
 
