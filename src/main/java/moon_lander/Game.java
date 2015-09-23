@@ -115,7 +115,7 @@ public class Game {
                     playerRocket.rocketCoordinateX + playerRocket.rocketImgWidth > meteor[i].meteorCoordinateX &&
                     playerRocket.rocketCoordinateY < meteor[i].meteorCoordinateY + meteor[i].meteorImgHeight &&
                     playerRocket.rocketImgHeight + playerRocket.rocketCoordinateY > meteor[i].meteorCoordinateY) {
-
+                Sound.ROCKET_EXPLOSION.play();
                 //collision = true
                 playerRocket.crashed = true;
                 meteor[i].resetMeteors();
@@ -123,6 +123,7 @@ public class Game {
             }
             if (meteor[i].meteorCoordinateY + meteor[i].meteorImgHeight - 10 > landingArea.y) {
                 meteor[i].crashed = true;
+                Sound.METEOR_EXPLOSION.play();
             }
 
         }
@@ -134,10 +135,17 @@ public class Game {
                 // Check if the rocket speed isn't too high.
                 if (playerRocket.speedY <= playerRocket.topLandingSpeed)
                     playerRocket.landed = true;
-                else
+                else {
                     playerRocket.crashed = true;
-            } else
+                    Sound.ROCKET_EXPLOSION.play();
+                    Framework.gameState = Framework.GameState.GAMEOVER;
+                }
+            } else {
                 playerRocket.crashed = true;
+                Sound.ROCKET_EXPLOSION.play();
+                Framework.gameState = Framework.GameState.GAMEOVER;
+
+            }
 
             Framework.gameState = Framework.GameState.GAMEOVER;
         }
